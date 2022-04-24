@@ -1,6 +1,6 @@
 {
   "name": "ym-web",
-  "version": "1.0.8",
+  "version": "0.0.1",
   "description": "ym web",
   "scripts": {
     "build": "rollup -c rollup.config.js && node scripts/build.js",
