@@ -1,5 +1,4 @@
 import type {
-  JSX,
   ComponentChild,
   ComponentFactory,
   ComponentAttributes,

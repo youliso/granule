@@ -1,4 +1,4 @@
-import type { JSX, View, Route, ViewParameters } from "../types";
+import type { View, Route, ViewParameters } from "../types";
 import { renderView, unView } from "./h";
 import { queryParams, toParams } from "../utils";
 
