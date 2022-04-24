@@ -1,7 +1,5 @@
-# ym electron
-
-Electron multiwindow mode template
+# web-modules
 
 ## template
 
-[electron-template](https://github.com/youliso/electron-template)
+[web-template](https://github.com/youliso/web-template)
