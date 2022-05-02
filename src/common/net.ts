@@ -1,4 +1,4 @@
-import { queryParams } from "../utils";
+import { queryParams } from "./utils";
 
 export interface RequestOpt extends RequestInit {
   isStringify?: boolean; //是否stringify参数（非GET请求使用）

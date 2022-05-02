@@ -1,6 +1,6 @@
 import type { View, Route, ViewParameters } from "../types";
 import { renderView, unView } from "./h";
-import { queryParams, toParams } from "../utils";
+import { queryParams, toParams } from "./utils";
 
 export class Router {
   private instances: { [key: string]: View } = {};
