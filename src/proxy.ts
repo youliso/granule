@@ -1,4 +1,4 @@
-import type { ProxyValue, ComponentChild } from "../types";
+import type { ProxyValue, ComponentChild } from "./types";
 import { h } from "./h";
 
 function newProxy(data: any, callback: Function) {

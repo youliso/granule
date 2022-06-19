@@ -4,7 +4,7 @@ import type {
   ComponentAttributes,
   View,
   ViewParameters,
-} from "../types";
+} from "./types";
 
 function applyChild(element: JSX.Element, child: ComponentChild) {
   if (
