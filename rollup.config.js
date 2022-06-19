@@ -20,13 +20,7 @@ const plugins = () => [
 ];
 
 const external = [
-  ...builtinModules,
-  "./globalcomponent",
-  "./h",
-  "./proxy",
-  "./router",
-  "./store",
-  "./utils"
+  ...builtinModules
 ];
 
 /** @type {import('rollup').RollupOptions[]} */
@@ -61,7 +55,7 @@ flies.forEach((path) => {
     input: `./src/${path}.ts`,
     output: [
       {
-        file: `./dist/${path}.mjs`,
+        file: `./dist/${path}.js`,
         format: "esm",
         sourcemap: false,
       },
