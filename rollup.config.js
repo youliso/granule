@@ -1,5 +1,3 @@
-import { readdirSync, statSync } from "fs";
-import { resolve, extname } from "path";
 import { builtinModules } from "module";
 import { terser } from "rollup-plugin-terser";
 import commonjs from "@rollup/plugin-commonjs";
@@ -24,45 +22,18 @@ const external = [
 ];
 
 /** @type {import('rollup').RollupOptions[]} */
-let srcPath = resolve("src");
-
-let dPathLength = (resolve() + "/").length;
-
-function file(path) {
-  let files = [];
-  let dirArray = readdirSync(path);
-  for (let d of dirArray) {
-    let filePath = resolve(path, d);
-    let stat = statSync(filePath);
-    if (stat.isDirectory()) {
-      files = files.concat(file(filePath));
-    }
-    if (stat.isFile() && extname(filePath) === ".ts") {
-      files.push(filePath);
-    }
-  }
-  return files;
-}
-
-const flies = file(srcPath).map((e) =>
-  e.substring(dPathLength + 4, e.length - 3)
-);
-
 let config = [];
-flies.forEach((path) => {
-  if (path.startsWith("types")) return;
-  config.push({
-    input: `./src/${path}.ts`,
-    output: [
-      {
-        file: `./dist/${path}.js`,
-        format: "esm",
-        sourcemap: false,
-      },
-    ],
-    external,
-    plugins: plugins(),
-  });
+config.push({
+  input: `./src/index.ts`,
+  output: [
+    {
+      file: `./dist/index.js`,
+      format: "esm",
+      sourcemap: false,
+    },
+  ],
+  external,
+  plugins: plugins(),
 });
 
 export default config;
