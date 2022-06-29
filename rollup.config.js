@@ -28,6 +28,12 @@ config.push({
   output: [
     {
       file: `./dist/index.js`,
+      exports: "auto",
+      format: "commonjs",
+      sourcemap: false,
+    },
+    {
+      file: `./dist/index.mjs`,
       format: "esm",
       sourcemap: false,
     },

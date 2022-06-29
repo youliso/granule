@@ -1,7 +1,7 @@
 {
-  "name": "ym-web",
-  "version": "2.0.5",
-  "description": "ym web",
+  "name": "@youli/web-modules",
+  "version": "1.0.0",
+  "description": "web modules vanilla",
   "scripts": {
     "build": "rollup -c rollup.config.js && node build.js",
     "build:watch": "rollup -c rollup.config.js -w",
@@ -9,7 +9,10 @@
     "test:prettier": "prettier \"./src\" --list-different"
   },
   "keywords": [
-    "web"
+    "web",
+    "vanilla",
+    "ts",
+    "jsx"
   ],
   "author": "youliso",
   "repository": {
@@ -21,11 +24,11 @@
     "**/*"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "prettier": "^2.7.1",
-    "rollup": "^2.75.6",
+    "rollup": "^2.75.7",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.32.1",
     "typescript": "^4.7.4"
