@@ -18,12 +18,4 @@ const test = (
   </>
 );
 
-const test2 = (
-  <>
-    <div>{countElement}</div>
-    <button onClick={addCount}>+add</button>
-  </>
-);
-
 document.body.appendChild(test);
-document.body.appendChild(test2);
