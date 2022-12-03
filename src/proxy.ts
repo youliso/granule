@@ -40,8 +40,7 @@ export function useElement<T, K extends keyof HTMLElementTagNameMap>(
   ) as HTMLElementTagNameMap[K];
   const data = newProxy(
     { value },
-    (value: any, p: string, target: any) => (element.textContent = value)
+    (value: any) => (element.textContent = value)
   );
-  console.log(data);
   return [data, element];
 }

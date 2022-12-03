@@ -1,14 +1,11 @@
-import { h, f } from "../../src";
-import { useElement } from "../../src/proxy";
+import { h, f, useElement } from "../../src";
 
-const [str, dom] = useElement("test");
+const [str, dom] = useElement("test", "div", "test");
 
-str.value = "321";
+setTimeout(() => {
+  str.value = "32s2311";
+}, 1000);
 
-const test = (
-  <>
-    <div>{dom}</div>
-  </>
-);
+const test = <>{dom}</>;
 
 document.body.appendChild(test);

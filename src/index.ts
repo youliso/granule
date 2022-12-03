@@ -1,6 +1,7 @@
 import { IntrinsicElementsHTML, IntrinsicElementsSVG } from "./types";
 
 export * from "./element";
+export * from "./proxy";
 export * from "./types";
 
 export interface TsxConfig {
