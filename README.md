@@ -1,4 +1,4 @@
-# web-modules
+# granule
 
 ## Credits
 
