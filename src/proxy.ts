@@ -5,16 +5,6 @@ export type ProxyValue<T> = { value: T };
 
 export function newProxy(data: any, callback: Function) {
   return new Proxy(data, {
-    construct(target, args) {
-      console.log(target);
-      const result = new target(...args);
-      const originToStringTag = Object.prototype.toString
-        .call(result)
-        .slice(1, -1)
-        .split(" ")[1];
-      result[Symbol.toStringTag] = "Proxy-" + originToStringTag;
-      return result;
-    },
     get: (target, p) => {
       return target[p];
     },
@@ -30,11 +20,11 @@ export function newProxy(data: any, callback: Function) {
 
 export function useElement<T, K extends keyof HTMLElementTagNameMap>(
   value: T,
-  tagName: K | "span" = "span",
+  tagName?: K,
   className?: string
 ): [ProxyValue<T>, HTMLElementTagNameMap[K]] {
   const element = h(
-    tagName,
+    tagName || "span",
     { class: className },
     value as unknown as ComponentChild
   ) as HTMLElementTagNameMap[K];

@@ -1,6 +1,11 @@
 import { h, f, useElement } from "../../src";
+import { css } from "@emotion/css/macro";
 
-const [count, countElement] = useElement(0);
+const style = css`
+  color: red;
+`;
+
+const [count, countElement] = useElement(0, "div", style);
 
 const addCount = () => {
   count.value++;
@@ -8,7 +13,7 @@ const addCount = () => {
 
 const test = (
   <>
-    <div>{countElement}</div>
+    {countElement}
     <button onClick={addCount}>+add</button>
   </>
 );
