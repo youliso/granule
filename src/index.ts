@@ -1,8 +1,9 @@
-import { IntrinsicElementsHTML, IntrinsicElementsSVG } from "./types";
+import type { IntrinsicElementsHTML, IntrinsicElementsSVG } from "./types";
 
+export * from "./types";
 export * from "./element";
 export * from "./proxy";
-export * from "./types";
+export * from "./store";
 
 export interface TsxConfig {
   [s: string]: boolean;
