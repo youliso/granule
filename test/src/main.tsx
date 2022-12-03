@@ -7,7 +7,7 @@ str.value = "321";
 
 const test = (
   <>
-    <div>{str}</div>
+    <div>{dom}</div>
   </>
 );
 

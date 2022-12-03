@@ -2,12 +2,10 @@ import type { EventAttributes } from "./EventAttributes";
 import type { HTMLAttributes } from "./HTMLAtributes";
 import type { StyleAttributes } from "./StyleAttributes";
 import type { SVGAttributes } from "./SVGAttributes";
-import type { ProxyValue } from "../proxy";
 
 export type ComponentChild =
   | ComponentChild[]
   | JSX.Element
-  | ProxyValue<any>
   | string
   | number
   | boolean
