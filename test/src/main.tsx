@@ -9,7 +9,7 @@ const addCount = () => {
 const test = (
   <>
     <div>{countElement}</div>
-    <button onClick={addCount}>+</button>
+    <button onClick={addCount}>+add</button>
   </>
 );
 
