@@ -1,7 +1,6 @@
+import type { ProxyValue } from "./types/Proxy";
 import type { ComponentChild } from "./types";
 import { h } from "./element";
-
-export type ProxyValue<T> = { value: T };
 
 export function newProxy(data: any, callback: Function) {
   return new Proxy(data, {
