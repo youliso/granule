@@ -1,11 +1,16 @@
 import { h, f, useElement } from "../../src";
 
-const [str, dom] = useElement("test", "div", "test");
+const [count, countElement] = useElement(0);
 
-setTimeout(() => {
-  str.value = "32s2311";
-}, 1000);
+const addCount = () => {
+  count.value++;
+};
 
-const test = <>{dom}</>;
+const test = (
+  <>
+    <div>{countElement}</div>
+    <button onClick={addCount}>+</button>
+  </>
+);
 
 document.body.appendChild(test);
