@@ -1,7 +1,7 @@
 {
-  "name": "@youliso/web-modules",
-  "version": "1.0.0",
-  "description": "web modules vanilla",
+  "name": "@youliso/granule",
+  "version": "0.0.1",
+  "description": "Vanilla 0_0",
   "scripts": {
     "build": "rollup -c rollup.config.mjs && node build.js",
     "build:watch": "rollup -c rollup.config.js -w",
