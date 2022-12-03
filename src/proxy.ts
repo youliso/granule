@@ -1,55 +1,47 @@
-import type { ProxyValue, ComponentChild } from "./types";
-import { h } from "./h";
+import type { ComponentChild } from "./types";
+import { h } from "./element";
 
-function newProxy(data: any, callback: Function) {
+export type ProxyValue<T> = { value: T };
+
+export function newProxy(data: any, callback: Function) {
   return new Proxy(data, {
+    construct(target, args) {
+      console.log(target);
+      const result = new target(...args);
+      const originToStringTag = Object.prototype.toString
+        .call(result)
+        .slice(1, -1)
+        .split(" ")[1];
+      result[Symbol.toStringTag] = "Proxy-" + originToStringTag;
+      return result;
+    },
     get: (target, p) => {
       return target[p];
     },
     set: (target, p, value) => {
       if (target[p] !== value) {
         target[p] = value;
-        callback(value, p as string, target);
+        callback && callback(value, p as string, target);
       }
       return true;
     },
   });
 }
 
-export function proxy<T>(
+export function useElement<T, K extends keyof HTMLElementTagNameMap>(
   value: T,
-  callback: (value: any, p: string, target: any) => void
-): ProxyValue<T>;
-export function proxy(value: any, callback?: Function) {
-  return newProxy(
-    { value },
-    (value: any, p: string, target: any) =>
-      callback && callback(value, p, target)
-  );
-}
-
-export function proxys<T>(
-  value: T,
-  callback: (value: any, p: string, target: any) => void
-): T;
-export function proxys(value: any, callback?: Function) {
-  return newProxy(
-    value,
-    (value: any, p: string, target: any) =>
-      callback && callback(value, p, target)
-  );
-}
-
-export function useDV<T, K extends keyof HTMLElementTagNameMap>(
-  str: T,
   tagName: K | "span" = "span",
   className?: string
 ): [ProxyValue<T>, HTMLElementTagNameMap[K]] {
-  const view = h(
+  const element = h(
     tagName,
     { class: className },
-    str as unknown as ComponentChild
+    value as unknown as ComponentChild
   ) as HTMLElementTagNameMap[K];
-  const data = proxy(str, (value) => (view.textContent = value));
-  return [data, view];
+  const data = newProxy(
+    { value },
+    (value: any, p: string, target: any) => (element.textContent = value)
+  );
+  console.log(data);
+  return [data, element];
 }

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "web modules vanilla",
   "scripts": {
-    "build": "rollup -c rollup.config.js && node build.js",
+    "build": "rollup -c rollup.config.mjs && node build.js",
     "build:watch": "rollup -c rollup.config.js -w",
     "fix:prettier": "prettier \"./src\" --write",
     "test:prettier": "prettier \"./src\" --list-different"
@@ -28,13 +28,14 @@
     "**/*"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^22.0.1",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "prettier": "^2.7.1",
-    "rollup": "^2.75.7",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.32.1",
-    "typescript": "^4.7.4"
+    "@rollup/plugin-commonjs": "^23.0.3",
+    "@rollup/plugin-json": "^5.0.2",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@types/node": "^18.11.10",
+    "prettier": "^2.8.0",
+    "rollup": "^3.5.1",
+    "rollup-plugin-esbuild-minify": "^1.0.7",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "typescript": "^4.9.3"
   }
 }

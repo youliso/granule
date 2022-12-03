@@ -1,5 +1,5 @@
 import { builtinModules } from "module";
-import { terser } from "rollup-plugin-terser";
+import { minify } from "rollup-plugin-esbuild-minify";
 import commonjs from "@rollup/plugin-commonjs";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import json from "@rollup/plugin-json";
@@ -14,26 +14,18 @@ const plugins = () => [
   nodeResolve({
     preferBuiltins: true,
   }),
-  terser(),
+  minify(),
 ];
 
-const external = [
-  ...builtinModules
-];
+const external = [...builtinModules];
 
 /** @type {import('rollup').RollupOptions[]} */
 let config = [];
 config.push({
-  input: `./src/index.ts`,
+  input: `src/index.ts`,
   output: [
     {
-      file: `./dist/index.js`,
-      exports: "auto",
-      format: "commonjs",
-      sourcemap: false,
-    },
-    {
-      file: `./dist/index.mjs`,
+      file: `dist/index.js`,
       format: "esm",
       sourcemap: false,
     },
