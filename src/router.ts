@@ -44,7 +44,7 @@ function toParams(str: string) {
 export class Router {
   public type: "history" | "hash";
   // 当前路由挂载dom
-  public element: JSX.Element | HTMLElement;
+  public element: JSX.Element | HTMLElement | undefined;
 
   public routes: Routes = {};
 
@@ -65,19 +65,9 @@ export class Router {
 
   public onAfterRoute: (path: string) => Promise<void> | void = () => {};
 
-  constructor(
-    type: "history" | "hash",
-    element: JSX.Element | HTMLElement | string,
-    routes: Routes
-  ) {
+  constructor(type: "history" | "hash", routes: Routes) {
     this.type = type;
     this.onHistory();
-    if (typeof element === "string") {
-      const dom = document.getElementById(element);
-      if (!dom) throw new Error(`element ${element} null`);
-      this.element = dom;
-    } else this.element = element;
-    if (!this.element) throw new Error(`element ${element} null`);
     this.routes = routes;
   }
 
@@ -98,7 +88,14 @@ export class Router {
     this.history.unshift({ path, query, parame });
   }
 
-  init(path?: string) {
+  mount(element: JSX.Element | HTMLElement | string, path?: string) {
+    if (typeof element === "string") {
+      const dom = document.getElementById(element);
+      if (!dom) throw new Error(`element ${element} null`);
+      this.element = dom;
+    } else this.element = element;
+    if (!this.element) throw new Error(`element ${element} null`);
+
     if (this.type === "hash") path = path || window.location.hash.substring(1);
     else if (this.type === "history")
       path = path || document.location.pathname + document.location.search;
@@ -180,18 +177,18 @@ export class Router {
       throw new Error(`beyond the history of ${path}`);
     }
     const render = async () => {
-      while (this.element.firstElementChild) {
-        this.element.firstElementChild.remove();
+      while (this.element!.firstElementChild) {
+        this.element!.firstElementChild.remove();
       }
       if (route.element) {
         route.render(query, params, true);
-        this.element.appendChild(route.element);
+        this.element!.appendChild(route.element);
       } else if (alive && !route.element) {
         route.element = await route.render(query, params, false);
-        this.element.appendChild(route.element);
+        this.element!.appendChild(route.element);
       } else {
         delete route.element;
-        this.element.appendChild(await route.render(query, params, false));
+        this.element!.appendChild(await route.render(query, params, false));
       }
       this.currentPath = path;
       this.currentParame = { query, params };

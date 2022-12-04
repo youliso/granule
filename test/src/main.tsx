@@ -35,7 +35,7 @@ const test2 = async (query: any) => {
   );
 };
 
-const router = new Router("hash", "root", {
+const router = new Router("hash", {
   "/": {
     render: test1,
   },
@@ -44,4 +44,15 @@ const router = new Router("hash", "root", {
   },
 });
 
-router.init();
+const routerEl = <div></div>;
+
+router.mount(routerEl);
+
+const index = (
+  <div>
+    <div>hello</div>
+    {routerEl}
+  </div>
+);
+
+document.body.appendChild(index);
