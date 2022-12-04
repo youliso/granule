@@ -2,6 +2,7 @@ import type { IntrinsicElementsHTML, IntrinsicElementsSVG } from "./types";
 
 export * from "./types";
 export * from "./element";
+export * from "./router";
 export * from "./proxy";
 export * from "./store";
 

@@ -47,8 +47,6 @@ export function createElement(
 ): JSX.Element {
   if (typeof tag === "function") return tag({ ...attrs, children });
 
-  console.log(tag);
-
   const element = createDomElement(tag, attrs);
 
   if (attrs) setAttributes(element, attrs as ComponentAttributes);
