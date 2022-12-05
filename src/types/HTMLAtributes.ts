@@ -146,4 +146,7 @@ export interface HTMLAttributes {
   itemType?: string;
   itemID?: string;
   itemRef?: string;
+
+  //router
+  router?: boolean;
 }

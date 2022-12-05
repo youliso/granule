@@ -88,6 +88,39 @@ export class Router {
     this.history.unshift({ path, query, parame });
   }
 
+  private getChildRoute(keys: string[], routes: Routes) {
+    let rs: Route[] = [];
+    if (!keys[0]) return rs;
+    const route = routes[keys[0]];
+    if (!route) return rs;
+    rs.push(route);
+    if (route.children && keys.length > 1) {
+      rs.push(...this.getChildRoute(keys.slice(1), route.children));
+    }
+    return rs;
+  }
+
+  private getRoute(path: string) {
+    const route = this.routes[path];
+    if (!route) {
+      let rs: Route[] = [];
+      const keys = Object.keys(this.routes);
+      const mainRouteKey = keys.filter((key) => path.startsWith(key))[0];
+      if (!mainRouteKey) return rs;
+      const mainRoute = this.routes[mainRouteKey];
+      if (mainRoute) rs.push(mainRoute);
+      if (mainRoute.children) {
+        const childKey = path.slice(
+          path.indexOf(mainRouteKey) + 1,
+          path.length
+        );
+        rs.push(...this.getChildRoute(childKey.split("/"), mainRoute.children));
+      }
+      return rs;
+    }
+    return [this.routes[path]];
+  }
+
   mount(element: JSX.Element | HTMLElement | string, path?: string) {
     if (typeof element === "string") {
       const dom = document.getElementById(element);
@@ -100,10 +133,6 @@ export class Router {
     else if (this.type === "history")
       path = path || document.location.pathname + document.location.search;
     this.replace(path || "/").catch(console.error);
-  }
-
-  getRoute(path: string) {
-    return this.routes[path];
   }
 
   setRoute(route: Routes) {
@@ -151,71 +180,91 @@ export class Router {
     );
   }
 
-  async replace(path: string, params?: any, alive: boolean = false) {
+  async replace(path: string, params?: any) {
     const [key, args] = path.split("?");
     const query = toParams(args);
-    this.rIng("replace", key, query, params, alive);
+    this.rIng("replace", key, query, params);
   }
 
-  async push(path: string, params?: any, alive: boolean = false) {
+  async push(path: string, params?: any) {
     const [key, args] = path.split("?");
     const query = toParams(args);
-    this.rIng("push", key, query, params, alive);
+    this.rIng("push", key, query, params);
   }
 
-  async rIng(
-    type: string,
-    path: string,
-    query?: any,
-    params?: any,
-    alive?: boolean
-  ) {
+  async uIng() {
+    const routes = this.getRoute(this.currentPath);
+    if (!routes) return;
+    routes.forEach((route) => {
+      if (route.isAlive) {
+        route.onActivated && route.onActivated();
+      } else {
+        route.onUnmounted && route.onUnmounted();
+      }
+    });
+  }
+
+  async rIng(type: string, path: string, query?: any, params?: any) {
     const isR = await this.onBeforeRoute(this.currentPath, path);
     if (!isR) return;
-    const route = this.getRoute(path);
-    if (!route) {
+    const routes = this.getRoute(path);
+    if (!routes) {
       throw new Error(`beyond the history of ${path}`);
     }
-
-    const render = async () => {
-      (this.element as HTMLElement).innerHTML = "";
-      if (route.element) {
-        route.render(query, params, true);
-        this.element!.appendChild(route.element);
-      } else if (alive && !route.element) {
-        route.element = await route.render(query, params, false);
-        this.element!.appendChild(route.element);
-      } else {
-        delete route.element;
-        this.element!.appendChild(await route.render(query, params, false));
-      }
-      this.currentPath = path;
-      this.currentParame = { query, params };
-      const queryStr = queryParams(query);
-      const url = `${path}${queryStr ? "?" + queryStr : ""}`;
-      if (this.type === "history") {
-        switch (type) {
-          case "replace":
-            history.replaceState(params, path, url);
-            break;
-          case "push":
-            history.pushState(params, path, url);
-            break;
+    this.currentPath && this.uIng();
+    (this.element as HTMLElement).innerHTML = "";
+    for (let index = 0; index < routes.length; index++) {
+      const route = routes[index];
+      if (
+        route.beforeRoute &&
+        !(await route.beforeRoute(this.currentPath, path))
+      )
+        return;
+      route.onLoad && route.onLoad(query, params);
+      let element: JSX.Element | undefined;
+      if (index === 0) element = this.element;
+      else {
+        const parentElement = routes[index - 1].element;
+        if (parentElement instanceof DocumentFragment) {
+          console.warn(
+            `[path:${path}] The route parent cannot be DocumentFragment`
+          );
         }
-      } else {
-        if (type.startsWith("go")) {
-          this.history.splice(0, Number(this.type.slice(2)));
-        } else if (type === "back") {
-          this.history.splice(0, 1);
-        } else {
-          this.setHistory(path, query, params);
-        }
-        window.location.hash = url;
+        parentElement &&
+          (element = parentElement.querySelector("div[router]") as JSX.Element);
       }
-      await this.onAfterRoute(this.currentPath);
-    };
-    if (route.beforeRoute) {
-      route.beforeRoute(this.currentPath, path, render);
-    } else await render();
+      if (route.isAlive && route.element) {
+        element && element.appendChild(route.element);
+        route.onAlive && route.onAlive(query, params);
+      } else {
+        route.element = await route.render();
+        element && element.appendChild(route.element);
+        route.onReady && route.onReady();
+      }
+    }
+    this.currentPath = path;
+    this.currentParame = { query, params };
+    const queryStr = queryParams(query);
+    const url = `${path}${queryStr ? "?" + queryStr : ""}`;
+    if (this.type === "history") {
+      switch (type) {
+        case "replace":
+          history.replaceState(params, path, url);
+          break;
+        case "push":
+          history.pushState(params, path, url);
+          break;
+      }
+    } else {
+      if (type.startsWith("go")) {
+        this.history.splice(0, Number(this.type.slice(2)));
+      } else if (type === "back") {
+        this.history.splice(0, 1);
+      } else {
+        this.setHistory(path, query, params);
+      }
+      window.location.hash = url;
+    }
+    await this.onAfterRoute(this.currentPath);
   }
 }

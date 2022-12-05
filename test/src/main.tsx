@@ -31,38 +31,56 @@ const updateList = () => {
   list.value[1].a++;
 };
 
-const test1 = async (query: any) => {
-  console.log(query);
+const test1 = async () => {
   return (
-    <>
+    <div>
       {countElement}
       <div>test1</div>
+      <div router></div>
       {countElement}
       <button onClick={addCount}>+add</button>
       <button onClick={updateList}>+update</button>
-      <button onClick={() => router.push("/test?id=1")}>test2</button>
-    </>
+      <button onClick={() => router.push("/test/test3?id=1")}>test2</button>
+    </div>
   );
 };
 
-const test2 = async (query: any) => {
-  console.log(query);
+const test2 = async () => {
   return (
-    <>
+    <div>
       <div>test2</div>
+      <div router></div>
+      <div>{countElement}</div>
+      <button onClick={addCount}>+add</button>
+      <button onClick={() => router.push("/test")}>/test</button>
+    </div>
+  );
+};
+
+const test3 = async () => {
+  return (
+    <div>
+      <div>test3</div>
       <div>{countElement}</div>
       <button onClick={addCount}>+add</button>
       <button onClick={() => router.back()}>back</button>
-    </>
+    </div>
   );
 };
 
 const router = new Router("hash", {
   "/": {
     render: test1,
-  },
-  "/test": {
-    render: test2,
+    children: {
+      test: {
+        render: test2,
+        children: {
+          test3: {
+            render: test3,
+          },
+        },
+      },
+    },
   },
 });
 

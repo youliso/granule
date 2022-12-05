@@ -1,11 +1,16 @@
 export interface Route {
-  beforeRoute?: (form: string, to: string, next: () => Promise<void>) => void;
-  render: (query?: any, params?: any, alive?: boolean) => Promise<JSX.Element>;
+  beforeRoute?: (form: string, to: string) => Promise<boolean>;
+  render: () => Promise<JSX.Element>;
+  onLoad?: (query?: any, params?: any) => void;
+  onAlive?: (query?: any, params?: any) => void;
+  onReady?: () => void;
   onUnmounted?: () => void;
   onActivated?: () => void;
-  onready?: () => void;
+  isAlive?: boolean;
   element?: JSX.Element;
+  children?: { [key: string]: Route };
 }
+
 export interface Routes {
   [key: string]: Route;
 }
