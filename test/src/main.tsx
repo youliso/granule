@@ -1,14 +1,34 @@
-import { h, f, useElement, Router } from "../../src";
+import { h, f, useProxy, useElement, Router } from "../../src";
 import { css } from "@emotion/css/macro";
 
 const style = css`
   color: red;
 `;
+const [list, listElement] = useProxy([
+  {
+    a: 1,
+    b: 2,
+    c: 3,
+  },
+  {
+    a: 1,
+    b: 2,
+    c: 3,
+  },
+]);
+
+listElement((cbType: string, cb: any) => {
+  console.log(cbType, cb);
+});
 
 const [count, countElement] = useElement(0);
 
 const addCount = () => {
   count.value++;
+};
+
+const updateList = () => {
+  list.value[1].a++;
 };
 
 const test1 = async (query: any) => {
@@ -19,6 +39,7 @@ const test1 = async (query: any) => {
       <div>test1</div>
       {countElement}
       <button onClick={addCount}>+add</button>
+      <button onClick={updateList}>+update</button>
       <button onClick={() => router.push("/test?id=1")}>test2</button>
     </>
   );
