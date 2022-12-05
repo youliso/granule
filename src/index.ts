@@ -28,6 +28,7 @@ declare global {
     // Return type of jsx syntax
     type Element =
       | IfTsxConfig<"html", HTMLElement, never>
+      | IfTsxConfig<"", DocumentFragment, never>
       | IfTsxConfig<"svg", SVGElement, never>;
 
     // The property name to use

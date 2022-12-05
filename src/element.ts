@@ -10,7 +10,13 @@ function applyChild(element: JSX.Element, child: ComponentChild) {
     element.appendChild(child);
   else if (typeof child === "string" || typeof child === "number")
     element.appendChild(document.createTextNode(child.toString()));
-  else console.warn("Unknown type to append: ", child);
+  else if (typeof child === "function") {
+    const textElement = document.createTextNode("");
+    textElement.textContent = child(
+      textElement as unknown as JSX.Element
+    ).toString();
+    element.appendChild(textElement);
+  } else console.warn("Unknown type to append: ", child);
 }
 
 export function applyChildren(
@@ -55,9 +61,13 @@ export function createElement(
   return element;
 }
 
-export function createFragment({ children }: { children: Node[] | null }) {
+export function createFragment({
+  children,
+}: {
+  children: ComponentChild[] | null;
+}) {
   const element = document.createDocumentFragment();
-  children && children.forEach((node) => element.appendChild(node));
+  children && children.forEach((node) => applyChild(element, node));
   return element;
 }
 

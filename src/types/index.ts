@@ -6,6 +6,7 @@ import type { SVGAttributes } from "./SVGAttributes";
 export type ComponentChild =
   | ComponentChild[]
   | JSX.Element
+  | ((element: JSX.Element) => any)
   | string
   | number
   | boolean

@@ -5,7 +5,7 @@ const style = css`
   color: red;
 `;
 
-const [count, countElement] = useElement(0, "div", style);
+const [count, countElement] = useElement(0);
 
 const addCount = () => {
   count.value++;
@@ -15,8 +15,9 @@ const test1 = async (query: any) => {
   console.log(query);
   return (
     <>
+      {countElement}
       <div>test1</div>
-      <div>{countElement}</div>
+      {countElement}
       <button onClick={addCount}>+add</button>
       <button onClick={() => router.push("/test?id=1")}>test2</button>
     </>

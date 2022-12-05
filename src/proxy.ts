@@ -17,19 +17,23 @@ export function newProxy(data: any, callback: Function) {
   });
 }
 
-export function useElement<T, K extends keyof HTMLElementTagNameMap>(
+export function useProxy<T>(
   value: T,
-  tagName?: K,
-  className?: string
-): [ProxyValue<T>, HTMLElementTagNameMap[K]] {
-  const element = h(
-    tagName || "span",
-    { class: className },
-    value as unknown as ComponentChild
-  ) as HTMLElementTagNameMap[K];
-  const data = newProxy(
-    { value },
-    (value: any) => (element.textContent = value)
-  );
-  return [data, element];
+  callback: (value?: T, p?: string, target?: any) => void
+): ProxyValue<T> {
+  return newProxy({ value }, callback);
+}
+
+export function useElement<T>(
+  value: T
+): [ProxyValue<T>, (element: JSX.Element) => T] {
+  let els: JSX.Element[] = [];
+  const func = (element: JSX.Element) => {
+    els.push(element);
+    return data.value;
+  };
+  const data = newProxy({ value }, (value: any) => {
+    els.forEach((el) => (el.textContent = value));
+  });
+  return [data, func];
 }

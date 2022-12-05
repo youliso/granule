@@ -44,7 +44,7 @@ function toParams(str: string) {
 export class Router {
   public type: "history" | "hash";
   // 当前路由挂载dom
-  public element: JSX.Element | HTMLElement | undefined;
+  public element: JSX.Element | undefined;
 
   public routes: Routes = {};
 
@@ -176,10 +176,9 @@ export class Router {
     if (!route) {
       throw new Error(`beyond the history of ${path}`);
     }
+
     const render = async () => {
-      while (this.element!.firstElementChild) {
-        this.element!.firstElementChild.remove();
-      }
+      (this.element as HTMLElement).innerHTML = "";
       if (route.element) {
         route.render(query, params, true);
         this.element!.appendChild(route.element);
