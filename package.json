@@ -8,6 +8,9 @@
     "fix:prettier": "prettier \"./src\" --write",
     "test:prettier": "prettier \"./src\" --list-different"
   },
+  "main": "./index.js",
+  "module": "./index.js",
+  "types": "./index.d.ts",
   "keywords": [
     "web",
     "vanilla",
