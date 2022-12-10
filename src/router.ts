@@ -1,4 +1,4 @@
-import type { Routes, Route } from "./types/Router";
+import type { Routes, Route, View } from "./types/Router";
 
 /**
  * 对象转参数
@@ -42,20 +42,18 @@ function toParams(str: string) {
 }
 
 export class Router {
+  // 当前路由类型
   public type: "history" | "hash";
-  // 当前路由挂载dom
+  // 当前路由是否加载中
+  public isRing: boolean = false;
+  // 当前路由挂载节点
   public element: JSX.Element | undefined;
-
-  public routes: Routes = {};
-
-  public history: { path: string; query: any; parame: any }[] = [];
-
+  // 当前路由全地址
   public currentPath: string = "";
-
-  public currentParame: {
-    query?: any;
-    params?: any;
-  } = {};
+  // 当前路由key
+  public currentKey: string = "";
+  // 当前挂载路由
+  private routes: Routes = {};
 
   // 路由监听
   public onBeforeRoute: (
@@ -74,18 +72,23 @@ export class Router {
   private onHistory() {
     switch (this.type) {
       case "history":
-        window.onpopstate = (e) => {
+        window.addEventListener("popstate", (e) => {
           this.replace(
-            document.location.pathname + document.location.search,
+            window.location.pathname + window.location.search,
             e.state
           ).catch(console.error);
-        };
+        });
+        break;
+      case "hash":
+        window.addEventListener("popstate", (e) => {
+          !this.isRing &&
+            this.replace(
+              window.location.hash.substring(1),
+              e.state || {}
+            ).catch(console.error);
+        });
         break;
     }
-  }
-
-  private setHistory(path: string, query?: any, parame?: any) {
-    this.history.unshift({ path, query, parame });
   }
 
   private getChildRoute(keys: string[], routes: Routes) {
@@ -139,132 +142,112 @@ export class Router {
     this.routes = Object.assign(this.routes, route);
   }
 
-  killAlive(path: string) {
-    delete this.routes[path]?.element;
-  }
-
   async back() {
-    if (this.type === "history") {
-      history.back();
-      return;
-    }
-    let historyData = this.history[1];
-    if (!historyData) {
-      this.replace("/");
-      return;
-    }
-    await this.rIng(
-      "back",
-      historyData.path,
-      historyData.query,
-      historyData.parame
-    );
+    history.back();
   }
 
   async go(num: number = 1) {
-    if (this.type === "history") {
-      history.go(num);
-      return;
-    }
-    num < 0 && (num = -num);
-    let historyData = this.history[num];
-    if (!historyData) {
-      console.error(`beyond the history of back(${num})`);
-      return;
-    }
-    await this.rIng(
-      `go${num}`,
-      historyData.path,
-      historyData.query,
-      historyData.parame
-    );
+    history.go(num);
   }
 
   async replace(path: string, params?: any) {
+    if (this.currentPath === path) return;
     const [key, args] = path.split("?");
     const query = toParams(args);
-    this.rIng("replace", key, query, params);
+    this.rIng("replace", path, key, query, params);
   }
 
   async push(path: string, params?: any) {
+    if (this.currentPath === path) return;
     const [key, args] = path.split("?");
     const query = toParams(args);
-    this.rIng("push", key, query, params);
+    this.rIng("push", path, key, query, params);
   }
 
-  async uIng() {
-    const routes = this.getRoute(this.currentPath);
+  async uIng(key: string) {
+    const routes = this.getRoute(this.currentKey);
     if (!routes) return;
-    routes.forEach((route) => {
+    for (const route of routes) {
+      if (
+        route.$view?.beforeRoute &&
+        !(await route.$view?.beforeRoute(this.currentKey, key))
+      )
+        return false;
       if (route.isAlive) {
-        route.onActivated && route.onActivated();
+        route.$view?.onActivated && route.$view.onActivated();
       } else {
-        route.onUnmounted && route.onUnmounted();
+        route.$view?.onUnmounted && route.$view.onUnmounted();
       }
-    });
+    }
+    return true;
   }
 
-  async rIng(type: string, path: string, query?: any, params?: any) {
-    const isR = await this.onBeforeRoute(this.currentPath, path);
-    if (!isR) return;
+  async rIng(
+    type: string,
+    path: string,
+    key: string,
+    query?: any,
+    params?: any
+  ) {
+    const isR = await this.onBeforeRoute(this.currentKey, key);
+    if (!isR) return false;
+    if (this.currentKey && !this.uIng(key)) return false;
     const routes = this.getRoute(path);
     if (!routes) {
-      throw new Error(`beyond the history of ${path}`);
+      throw new Error(`beyond the history of ${key}`);
     }
-    this.currentPath && this.uIng();
-    (this.element as HTMLElement).innerHTML = "";
+    this.isRing = true;
+    let newElement: JSX.Element = document.createDocumentFragment();
     for (let index = 0; index < routes.length; index++) {
       const route = routes[index];
-      if (
-        route.beforeRoute &&
-        !(await route.beforeRoute(this.currentPath, path))
-      )
-        return;
-      route.onLoad && route.onLoad(query, params);
       let element: JSX.Element | undefined;
-      if (index === 0) element = this.element;
-      else {
-        const parentElement = routes[index - 1].element;
-        if (parentElement instanceof DocumentFragment) {
-          console.warn(
-            `[path:${path}] The route parent cannot be DocumentFragment`
-          );
-        }
-        parentElement &&
-          (element = parentElement.querySelector("div[router]") as JSX.Element);
+      if (index > 0) {
+        const parentElement = routes[index - 1].$view?.$element;
+        if (
+          parentElement &&
+          // @ts-ignore
+          parentElement[Symbol.toStringTag] !== "DocumentFragment"
+        )
+          element = parentElement!.querySelector("div[router]") as JSX.Element;
       }
-      if (route.isAlive && route.element) {
-        element && element.appendChild(route.element);
-        route.onAlive && route.onAlive(query, params);
+      let component: View | undefined;
+      if (route.isAlive && route.$view) {
+        element && element.appendChild(route.$view.$element as JSX.Element);
+        route.$view.onAlive && route.$view.onAlive(query, params);
+        continue;
+      } else if (typeof route.component?.render === "function") {
+        component = { ...route.component } as View;
+      } else if (typeof route.component === "function") {
+        component = { ...(await route.component()) } as View;
       } else {
-        route.element = await route.render();
-        element && element.appendChild(route.element);
-        route.onReady && route.onReady();
+        throw new Error("component error");
       }
+      component.onLoad && component.onLoad(query, params);
+      component.$element = await component.render();
+      if (element) element.appendChild(component.$element as JSX.Element);
+      else newElement.appendChild(component.$element);
+      component.onReady && component.onReady();
+      route.$view = component;
+    }
+    if (this.currentKey)
+      this.element?.replaceChild(
+        newElement,
+        this.element.firstChild as JSX.Element
+      );
+    else this.element?.appendChild(newElement);
+    const url = `${this.type === "hash" ? "#" : ""}${path}`;
+    switch (type) {
+      case "replace":
+        history.replaceState(params, key, url);
+        break;
+      case "push":
+        history.pushState(params, key, url);
+        break;
     }
     this.currentPath = path;
-    this.currentParame = { query, params };
-    const queryStr = queryParams(query);
-    const url = `${path}${queryStr ? "?" + queryStr : ""}`;
-    if (this.type === "history") {
-      switch (type) {
-        case "replace":
-          history.replaceState(params, path, url);
-          break;
-        case "push":
-          history.pushState(params, path, url);
-          break;
-      }
-    } else {
-      if (type.startsWith("go")) {
-        this.history.splice(0, Number(this.type.slice(2)));
-      } else if (type === "back") {
-        this.history.splice(0, 1);
-      } else {
-        this.setHistory(path, query, params);
-      }
-      window.location.hash = url;
-    }
-    await this.onAfterRoute(this.currentPath);
+    this.currentKey = key;
+    await this.onAfterRoute(this.currentKey);
+    this.isRing = false;
+    return true;
   }
 }
