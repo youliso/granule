@@ -1,6 +1,5 @@
 import { Router } from "../../src";
 
-import * as test2 from "./pages/test2";
 
 export const router = new Router("hash", {
   "/": {
@@ -17,6 +16,6 @@ export const router = new Router("hash", {
     },
   },
   "/test2": {
-    component: test2,
+    component: () => import("./pages/test2"),
   },
 });

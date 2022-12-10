@@ -34,8 +34,8 @@ const updateList = () => {
 
 export const render = async () => {
   return (
-    <div class={style}>
-      {countElement}
+    <div>
+      <div class={style}>{countElement}</div>
       <div>main</div>
       <div router></div>
       {countElement}

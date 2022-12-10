@@ -192,7 +192,7 @@ export class Router {
     const isR = await this.onBeforeRoute(this.currentKey, key);
     if (!isR) return false;
     if (this.currentKey && !this.uIng(key)) return false;
-    const routes = this.getRoute(path);
+    const routes = this.getRoute(key);
     if (!routes) {
       throw new Error(`beyond the history of ${key}`);
     }
@@ -202,13 +202,12 @@ export class Router {
       const route = routes[index];
       let element: JSX.Element | undefined;
       if (index > 0) {
-        const parentElement = routes[index - 1].$view?.$element;
-        if (
-          parentElement &&
-          // @ts-ignore
-          parentElement[Symbol.toStringTag] !== "DocumentFragment"
-        )
-          element = parentElement!.querySelector("div[router]") as JSX.Element;
+        element = routes[index - 1].$view?.$element?.querySelector(
+          "div[router]"
+        ) as JSX.Element;
+        if (!element) {
+          throw new Error(`[${key}] parent node is null`);
+        }
       }
       let component: View | undefined;
       if (route.isAlive && route.$view) {
@@ -224,17 +223,24 @@ export class Router {
       }
       component.onLoad && component.onLoad(query, params);
       component.$element = await component.render();
-      if (element) element.appendChild(component.$element as JSX.Element);
+      if (
+        component.$element &&
+        // @ts-ignore
+        component.$element[Symbol.toStringTag] === "DocumentFragment"
+      ) {
+        throw new Error(`[${key}] node cannot be a DocumentFragment`);
+      }
+      if (index > 0) element!.appendChild(component.$element as JSX.Element);
       else newElement.appendChild(component.$element);
       component.onReady && component.onReady();
       route.$view = component;
     }
-    if (this.currentKey)
+    if (this.currentKey) {
       this.element?.replaceChild(
         newElement,
         this.element.firstChild as JSX.Element
       );
-    else this.element?.appendChild(newElement);
+    } else this.element?.appendChild(newElement);
     const url = `${this.type === "hash" ? "#" : ""}${path}`;
     switch (type) {
       case "replace":
