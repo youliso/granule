@@ -7,7 +7,7 @@ function transferKnownProperties(source: any, target: any) {
 }
 
 export function setAttributes(
-  element: JSX.Element,
+  element: HTMLElement | SVGAElement,
   attrs: ComponentAttributes
 ) {
   for (const name of Object.keys(attrs)) {

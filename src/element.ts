@@ -55,7 +55,11 @@ export function createElement(
 
   const element = createDomElement(tag, attrs);
 
-  if (attrs) setAttributes(element, attrs as ComponentAttributes);
+  if (attrs)
+    setAttributes(
+      element as HTMLElement | SVGAElement,
+      attrs as ComponentAttributes
+    );
 
   applyChildren(element, children);
   return element;
