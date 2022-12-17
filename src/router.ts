@@ -1,5 +1,5 @@
 import type { Routes, Route, View } from './types/Router';
-import { toParams, queryParams } from './utils';
+import { toParams } from './utils';
 
 export class Router {
   // 当前路由类型
@@ -9,9 +9,9 @@ export class Router {
   // 当前路由挂载节点
   public element: JSX.Element | undefined;
   // 当前路由全地址
-  public currentPath: string = '';
+  private currentPath: string = '';
   // 当前路由key
-  public currentKey: string = '';
+  private currentKey: string = '';
   // 当前挂载路由
   private routes: Routes = {};
 
@@ -103,6 +103,13 @@ export class Router {
     this.routes = Object.assign(this.routes, route);
   }
 
+  getCurrent() {
+    return {
+      path: this.currentPath,
+      key: this.currentKey
+    };
+  }
+
   async back() {
     history.back();
   }
@@ -115,14 +122,14 @@ export class Router {
     if (this.currentPath === path) return;
     const [key, args] = path.split('?');
     const query = toParams(args);
-    this.rIng('replace', path, key, query, params);
+    await this.rIng('replace', path, key, query, params);
   }
 
   async push(path: string, params?: any) {
     if (this.currentPath === path) return;
     const [key, args] = path.split('?');
     const query = toParams(args);
-    this.rIng('push', path, key, query, params);
+    await this.rIng('push', path, key, query, params);
   }
 
   async uIng(key: string) {
@@ -138,6 +145,7 @@ export class Router {
         route.$view?.onActivated && route.$view.onActivated();
       } else {
         route.$view?.onUnmounted && route.$view.onUnmounted();
+        delete route.$view;
       }
     }
     return true;

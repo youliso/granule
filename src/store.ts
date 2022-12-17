@@ -2,8 +2,8 @@ import type {
   Actions,
   Store,
   SubscriptionFn,
-  MappedActions,
-} from "./types/Store";
+  MappedActions
+} from './types/Store';
 
 export function createStore<T>(actions: Actions<T>, state: T): Store<T> {
   const subscriptions: SubscriptionFn<T>[] = [];
@@ -15,14 +15,14 @@ export function createStore<T>(actions: Actions<T>, state: T): Store<T> {
       mappedActions[name] = (data) => {
         let newState = action(data);
 
-        if (typeof newState === "function") {
+        if (typeof newState === 'function') {
           newState = newState(globalState, mappedActions);
         }
 
         if (newState && !(newState instanceof Promise)) {
           globalState = {
             ...globalState,
-            ...newState,
+            ...newState
           };
 
           subscriptions.forEach((subscription) => {
@@ -33,12 +33,13 @@ export function createStore<T>(actions: Actions<T>, state: T): Store<T> {
     })(key, fn);
   }
 
-  const store: Store<T> = {
+  let store: Store<T>;
+  store = {
     actions: mappedActions,
     getState: () => globalState,
     subscribe: (listener) => {
       subscriptions.push(listener);
-    },
+    }
   };
 
   return store;
