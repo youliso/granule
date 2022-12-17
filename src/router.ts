@@ -1,57 +1,17 @@
-import type { Routes, Route, View } from "./types/Router";
-
-/**
- * 对象转参数
- * @param data
- */
-function queryParams(data: any): string {
-  let _result = [];
-  for (let key in data) {
-    let value = data[key];
-    if (["", undefined, null].includes(value)) {
-      continue;
-    }
-    if (value.constructor === Array) {
-      value.forEach((_value) => {
-        _result.push(
-          encodeURIComponent(key) + "[]=" + encodeURIComponent(_value)
-        );
-      });
-    } else {
-      _result.push(encodeURIComponent(key) + "=" + encodeURIComponent(value));
-    }
-  }
-  return _result.length ? _result.join("&") : "";
-}
-
-/**
- * 参数转对象
- * @param str
- */
-function toParams(str: string) {
-  if (!str) return null;
-  let obj: any = {},
-    index = str.indexOf("?") || 0,
-    params = str.substring(index + 1);
-  let parr = params.split("&");
-  for (let i of parr) {
-    let arr = i.split("=");
-    obj[arr[0]] = decodeURIComponent(arr[1]);
-  }
-  return obj;
-}
+import type { Routes, Route, View } from './types/Router';
+import { toParams, queryParams } from './utils';
 
 export class Router {
   // 当前路由类型
-  public type: "history" | "hash";
+  public type: 'history' | 'hash';
   // 当前路由是否加载中
   public isRing: boolean = false;
   // 当前路由挂载节点
   public element: JSX.Element | undefined;
   // 当前路由全地址
-  public currentPath: string = "";
+  public currentPath: string = '';
   // 当前路由key
-  public currentKey: string = "";
+  public currentKey: string = '';
   // 当前挂载路由
   private routes: Routes = {};
 
@@ -61,9 +21,10 @@ export class Router {
     to: string
   ) => Promise<boolean> | boolean = () => true;
 
-  public onAfterRoute: (path: string) => Promise<void> | void = () => {};
+  public onAfterRoute: (path: string) => Promise<void> | void = () => {
+  };
 
-  constructor(type: "history" | "hash", routes: Routes) {
+  constructor(type: 'history' | 'hash', routes: Routes) {
     this.type = type;
     this.onHistory();
     this.routes = routes;
@@ -71,21 +32,21 @@ export class Router {
 
   private onHistory() {
     switch (this.type) {
-      case "history":
-        window.addEventListener("popstate", (e) => {
+      case 'history':
+        window.addEventListener('popstate', (e) => {
           this.replace(
             window.location.pathname + window.location.search,
             e.state
           ).catch(console.error);
         });
         break;
-      case "hash":
-        window.addEventListener("popstate", (e) => {
+      case 'hash':
+        window.addEventListener('popstate', (e) => {
           !this.isRing &&
-            this.replace(
-              window.location.hash.substring(1),
-              e.state || {}
-            ).catch(console.error);
+          this.replace(
+            window.location.hash.substring(1),
+            e.state || {}
+          ).catch(console.error);
         });
         break;
     }
@@ -117,7 +78,7 @@ export class Router {
           path.indexOf(mainRouteKey) + 1,
           path.length
         );
-        rs.push(...this.getChildRoute(childKey.split("/"), mainRoute.children));
+        rs.push(...this.getChildRoute(childKey.split('/'), mainRoute.children));
       }
       return rs;
     }
@@ -125,17 +86,17 @@ export class Router {
   }
 
   mount(element: JSX.Element | HTMLElement | string, path?: string) {
-    if (typeof element === "string") {
+    if (typeof element === 'string') {
       const dom = document.getElementById(element);
       if (!dom) throw new Error(`element ${element} null`);
       this.element = dom;
     } else this.element = element;
     if (!this.element) throw new Error(`element ${element} null`);
 
-    if (this.type === "hash") path = path || window.location.hash.substring(1);
-    else if (this.type === "history")
+    if (this.type === 'hash') path = path || window.location.hash.substring(1);
+    else if (this.type === 'history')
       path = path || document.location.pathname + document.location.search;
-    this.replace(path || "/").catch(console.error);
+    this.replace(path || '/').catch(console.error);
   }
 
   setRoute(route: Routes) {
@@ -152,16 +113,16 @@ export class Router {
 
   async replace(path: string, params?: any) {
     if (this.currentPath === path) return;
-    const [key, args] = path.split("?");
+    const [key, args] = path.split('?');
     const query = toParams(args);
-    this.rIng("replace", path, key, query, params);
+    this.rIng('replace', path, key, query, params);
   }
 
   async push(path: string, params?: any) {
     if (this.currentPath === path) return;
-    const [key, args] = path.split("?");
+    const [key, args] = path.split('?');
     const query = toParams(args);
-    this.rIng("push", path, key, query, params);
+    this.rIng('push', path, key, query, params);
   }
 
   async uIng(key: string) {
@@ -191,7 +152,7 @@ export class Router {
   ) {
     const isR = await this.onBeforeRoute(this.currentKey, key);
     if (!isR) return false;
-    if (this.currentKey && !this.uIng(key)) return false;
+    if (this.currentKey && !(await this.uIng(key))) return false;
     const routes = this.getRoute(key);
     if (!routes) {
       throw new Error(`beyond the history of ${key}`);
@@ -203,7 +164,7 @@ export class Router {
       let element: JSX.Element | undefined;
       if (index > 0) {
         element = routes[index - 1].$view?.$element?.querySelector(
-          "div[router]"
+          'div[router]'
         ) as JSX.Element;
         if (!element) {
           throw new Error(`[${key}] parent node is null`);
@@ -214,19 +175,19 @@ export class Router {
         element && element.appendChild(route.$view.$element as JSX.Element);
         route.$view.onAlive && route.$view.onAlive(query, params);
         continue;
-      } else if (typeof route.component?.render === "function") {
+      } else if (typeof route.component?.render === 'function') {
         component = { ...route.component } as View;
-      } else if (typeof route.component === "function") {
+      } else if (typeof route.component === 'function') {
         component = { ...(await route.component()) } as View;
       } else {
-        throw new Error("component error");
+        throw new Error('component error');
       }
       component.onLoad && component.onLoad(query, params);
       component.$element = await component.render();
       if (
         component.$element &&
         // @ts-ignore
-        component.$element[Symbol.toStringTag] === "DocumentFragment"
+        component.$element[Symbol.toStringTag] === 'DocumentFragment'
       ) {
         throw new Error(`[${key}] node cannot be a DocumentFragment`);
       }
@@ -241,12 +202,12 @@ export class Router {
         this.element.firstChild as JSX.Element
       );
     } else this.element?.appendChild(newElement);
-    const url = `${this.type === "hash" ? "#" : ""}${path}`;
+    const url = `${this.type === 'hash' ? '#' : ''}${path}`;
     switch (type) {
-      case "replace":
+      case 'replace':
         history.replaceState(params, key, url);
         break;
-      case "push":
+      case 'push':
         history.pushState(params, key, url);
         break;
     }
