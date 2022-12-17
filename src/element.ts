@@ -1,5 +1,5 @@
-import { setAttributes } from "./attributes";
-import type { ComponentAttributes, ComponentChild, Component } from "./types";
+import { setAttributes } from './attributes';
+import type { ComponentAttributes, ComponentChild, Component } from './types';
 
 function applyChild(element: JSX.Element, child: ComponentChild) {
   if (
@@ -8,15 +8,17 @@ function applyChild(element: JSX.Element, child: ComponentChild) {
     child instanceof DocumentFragment
   )
     element.appendChild(child);
-  else if (typeof child === "string" || typeof child === "number")
+  else if (typeof child === 'string' || typeof child === 'number')
     element.appendChild(document.createTextNode(child.toString()));
-  else if (typeof child === "function") {
-    const textElement = document.createTextNode("");
-    textElement.textContent = child(
+  else if (typeof child === 'function') {
+    const textElement = document.createTextNode('');
+    let bc = child(
       textElement as unknown as JSX.Element
-    ).toString();
+    );
+    if (typeof bc === 'function') bc = bc(textElement);
+    textElement.textContent = JSON.stringify(bc);
     element.appendChild(textElement);
-  } else console.warn("Unknown type to append: ", child);
+  } else console.warn('Unknown type to append: ', child);
 }
 
 export function applyChildren(
@@ -51,7 +53,7 @@ export function createElement(
   attrs: null | ComponentAttributes,
   ...children: ComponentChild[]
 ): JSX.Element {
-  if (typeof tag === "function") return tag({ ...attrs, children });
+  if (typeof tag === 'function') return tag({ ...attrs, children });
 
   const element = createDomElement(tag, attrs);
 
@@ -66,8 +68,8 @@ export function createElement(
 }
 
 export function createFragment({
-  children,
-}: {
+                                 children
+                               }: {
   children: ComponentChild[] | null;
 }) {
   const element = document.createDocumentFragment();
