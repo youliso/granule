@@ -16,7 +16,7 @@ function applyChild(element: JSX.Element, child: ComponentChild) {
       textElement as unknown as JSX.Element
     );
     if (typeof bc === 'function') bc = bc(textElement);
-    textElement.textContent = JSON.stringify(bc);
+    textElement.textContent = typeof bc === 'object' ? JSON.stringify(bc) : bc;
     element.appendChild(textElement);
   } else console.warn('Unknown type to append: ', child);
 }
