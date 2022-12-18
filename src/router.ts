@@ -135,7 +135,7 @@ export class Router {
   async uIng(key: string) {
     const routes = this.getRoute(this.currentKey);
     if (!routes) return;
-    for (const route of routes) {
+    for (let route of routes) {
       if (
         route.$view?.beforeRoute &&
         !(await route.$view?.beforeRoute(this.currentKey, key))
@@ -168,7 +168,7 @@ export class Router {
     this.isRing = true;
     let newElement: JSX.Element = document.createDocumentFragment();
     for (let index = 0; index < routes.length; index++) {
-      const route = routes[index];
+      let route = routes[index];
       let element: JSX.Element | undefined;
       if (index > 0) {
         element = routes[index - 1].$view?.$element?.querySelector(
