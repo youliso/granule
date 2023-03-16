@@ -1,4 +1,4 @@
-import { h, f, useProxy, useElement } from '../../../src';
+import { h, f, useProxy, useElement, getValueByAKey } from '../../../src';
 import { router } from '../routes';
 
 const [list, listElement] = useProxy([
@@ -6,9 +6,13 @@ const [list, listElement] = useProxy([
     a: 1,
     b: 2,
     c: 3,
-    e: [{
-      test: 2
-    }]
+    e: [
+      {
+        test: {
+          num: 1
+        }
+      }
+    ]
   },
   {
     a: 1,
@@ -19,19 +23,24 @@ const [list, listElement] = useProxy([
 ]);
 
 listElement((cbType: string, cb: any) => {
-  console.log(cbType, cb);
+  console.log(cb);
+  console.log(getValueByAKey(list, cb.aKey), cb.aKey);
 });
 const updateList = () => {
-  list.value[0].e[0].test++;
+  list.value[0].e[0].test.num++;
 };
 
-const [count, countElement] = useElement(0);
+const [date, dateElement] = useElement(Date());
 
+setInterval(() => {
+  date.value = Date();
+}, 1000);
+
+const [count, countElement] = useElement(0);
 
 const addCount = () => {
   count.value++;
 };
-
 
 const [obj, objElement] = useElement({
   test: 0,
@@ -48,6 +57,7 @@ export const render = async () => {
     <div>
       <div>{objElement`dataae.t`}</div>
       <div>{countElement}</div>
+      <div>{dateElement}</div>
       <div>main</div>
       <div router></div>
       <div>

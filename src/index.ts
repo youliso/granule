@@ -1,35 +1,30 @@
-import type { IntrinsicElementsHTML, IntrinsicElementsSVG } from "./types";
+import type { IntrinsicElementsHTML, IntrinsicElementsSVG } from './types';
 
-export * from "./types";
-export * from "./element";
-export * from "./router";
-export * from "./proxy";
-export * from "./store";
+export * from './types';
+export * from './element';
+export * from './router';
+export * from './proxy';
+export * from './store';
+export * from './utils';
 
 export interface TsxConfig {
   [s: string]: boolean;
 }
 
 // Returns TIF if T is specified as true in TsxConfig, otherwise TELSE
-type IfTsxConfig<T extends string, TIF, TELSE> = TsxConfig[T] extends false
-  ? TELSE
-  : TIF;
+type IfTsxConfig<T extends string, TIF, TELSE> = TsxConfig[T] extends false ? TELSE : TIF;
 
-type IntrinsicElementsCombined = IfTsxConfig<
-  "html",
-  IntrinsicElementsHTML,
-  unknown
-> &
-  IfTsxConfig<"svg", IntrinsicElementsSVG, unknown>;
+type IntrinsicElementsCombined = IfTsxConfig<'html', IntrinsicElementsHTML, unknown> &
+  IfTsxConfig<'svg', IntrinsicElementsSVG, unknown>;
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     // Return type of jsx syntax
     type Element =
-      | IfTsxConfig<"html", HTMLElement, never>
-      | IfTsxConfig<"", DocumentFragment, never>
-      | IfTsxConfig<"svg", SVGElement, never>;
+      | IfTsxConfig<'html', HTMLElement, never>
+      | IfTsxConfig<'', DocumentFragment, never>
+      | IfTsxConfig<'svg', SVGElement, never>;
 
     // The property name to use
     interface ElementAttributesProperty {

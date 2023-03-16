@@ -33,7 +33,7 @@ export interface HTMLAttributes {
   dateTime?: string;
   default?: boolean;
   defer?: boolean;
-  dir?: "auto" | "rtl" | "ltr";
+  dir?: 'auto' | 'rtl' | 'ltr';
   disabled?: boolean;
   disableRemotePlayback?: boolean;
   download?: string;
@@ -66,7 +66,7 @@ export interface HTMLAttributes {
   label?: string;
   lang?: string;
   list?: string;
-  loading?: "eager" | "lazy";
+  loading?: 'eager' | 'lazy';
   loop?: boolean;
   low?: number;
   manifest?: string;

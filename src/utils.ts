@@ -11,9 +11,7 @@ export function queryParams(data: any): string {
     }
     if (value.constructor === Array) {
       value.forEach((_value) => {
-        _result.push(
-          encodeURIComponent(key) + '[]=' + encodeURIComponent(_value)
-        );
+        _result.push(encodeURIComponent(key) + '[]=' + encodeURIComponent(_value));
       });
     } else {
       _result.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
@@ -43,7 +41,10 @@ type Obj<Value> = {} & {
   [key: string]: Value | Obj<Value>;
 };
 
-export function getValueByAKey<Value>(data: { [key: string]: any }, key: string): Value | undefined {
+export function getValueByAKey<Value>(
+  data: { [key: string]: any },
+  key: string
+): Value | undefined {
   if (key === '') {
     console.error('Invalid key, the key can not be a empty string');
     return;

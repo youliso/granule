@@ -1,27 +1,27 @@
-import { HTMLAttributes } from "./HTMLAtributes";
+import { HTMLAttributes } from './HTMLAtributes';
 
 export interface SVGAttributes extends HTMLAttributes {
   accentHeight?: number | string;
-  accumulate?: "none" | "sum";
-  additive?: "replace" | "sum";
+  accumulate?: 'none' | 'sum';
+  additive?: 'replace' | 'sum';
   alignmentBaseline?:
-    | "auto"
-    | "baseline"
-    | "before-edge"
-    | "text-before-edge"
-    | "middle"
-    | "central"
-    | "after-edge"
-    | "text-after-edge"
-    | "ideographic"
-    | "alphabetic"
-    | "hanging"
-    | "mathematical"
-    | "inherit";
-  allowReorder?: "no" | "yes";
+    | 'auto'
+    | 'baseline'
+    | 'before-edge'
+    | 'text-before-edge'
+    | 'middle'
+    | 'central'
+    | 'after-edge'
+    | 'text-after-edge'
+    | 'ideographic'
+    | 'alphabetic'
+    | 'hanging'
+    | 'mathematical'
+    | 'inherit';
+  allowReorder?: 'no' | 'yes';
   alphabetic?: number | string;
   amplitude?: number | string;
-  arabicForm?: "initial" | "medial" | "terminal" | "isolated";
+  arabicForm?: 'initial' | 'medial' | 'terminal' | 'isolated';
   ascent?: number | string;
   attributeName?: string;
   attributeType?: string;
@@ -41,7 +41,7 @@ export interface SVGAttributes extends HTMLAttributes {
   clipPathUnits?: number | string;
   clipRule?: number | string;
   colorInterpolation?: number | string;
-  colorInterpolationFilters?: "auto" | "sRGB" | "linearRGB" | "inherit";
+  colorInterpolationFilters?: 'auto' | 'sRGB' | 'linearRGB' | 'inherit';
   colorProfile?: number | string;
   colorRendering?: number | string;
   contentScriptType?: number | string;
@@ -68,7 +68,7 @@ export interface SVGAttributes extends HTMLAttributes {
   externalResourcesRequired?: number | string;
   fill?: string;
   fillOpacity?: number | string;
-  fillRule?: "nonzero" | "evenodd" | "inherit";
+  fillRule?: 'nonzero' | 'evenodd' | 'inherit';
   filter?: string;
   filterRes?: number | string;
   filterUnits?: number | string;
@@ -190,8 +190,8 @@ export interface SVGAttributes extends HTMLAttributes {
   stroke?: string;
   strokeDasharray?: string | number;
   strokeDashoffset?: string | number;
-  strokeLinecap?: "butt" | "round" | "square" | "inherit";
-  strokeLinejoin?: "miter" | "round" | "bevel" | "inherit";
+  strokeLinecap?: 'butt' | 'round' | 'square' | 'inherit';
+  strokeLinejoin?: 'miter' | 'round' | 'bevel' | 'inherit';
   strokeMiterlimit?: string | number;
   strokeOpacity?: number | string;
   strokeWidth?: number | string;

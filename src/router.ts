@@ -16,13 +16,9 @@ export class Router {
   private routes: Routes = {};
 
   // 路由监听
-  public onBeforeRoute: (
-    form: string,
-    to: string
-  ) => Promise<boolean> | boolean = () => true;
+  public onBeforeRoute: (form: string, to: string) => Promise<boolean> | boolean = () => true;
 
-  public onAfterRoute: (path: string) => Promise<void> | void = () => {
-  };
+  public onAfterRoute: (path: string) => Promise<void> | void = () => {};
 
   constructor(type: 'history' | 'hash', routes: Routes) {
     this.type = type;
@@ -34,19 +30,15 @@ export class Router {
     switch (this.type) {
       case 'history':
         window.addEventListener('popstate', (e) => {
-          this.replace(
-            window.location.pathname + window.location.search,
-            e.state
-          ).catch(console.error);
+          this.replace(window.location.pathname + window.location.search, e.state).catch(
+            console.error
+          );
         });
         break;
       case 'hash':
         window.addEventListener('popstate', (e) => {
           !this.isRing &&
-          this.replace(
-            window.location.hash.substring(1),
-            e.state || {}
-          ).catch(console.error);
+            this.replace(window.location.hash.substring(1), e.state || {}).catch(console.error);
         });
         break;
     }
@@ -74,10 +66,7 @@ export class Router {
       const mainRoute = this.routes[mainRouteKey];
       if (mainRoute) rs.push(mainRoute);
       if (mainRoute.children) {
-        const childKey = path.slice(
-          path.indexOf(mainRouteKey) + 1,
-          path.length
-        );
+        const childKey = path.slice(path.indexOf(mainRouteKey) + 1, path.length);
         rs.push(...this.getChildRoute(childKey.split('/'), mainRoute.children));
       }
       return rs;
@@ -136,10 +125,7 @@ export class Router {
     const routes = this.getRoute(this.currentKey);
     if (!routes) return;
     for (let route of routes) {
-      if (
-        route.$view?.beforeRoute &&
-        !(await route.$view?.beforeRoute(this.currentKey, key))
-      )
+      if (route.$view?.beforeRoute && !(await route.$view?.beforeRoute(this.currentKey, key)))
         return false;
       if (route.isAlive) {
         route.$view?.onActivated && route.$view.onActivated();
@@ -151,13 +137,7 @@ export class Router {
     return true;
   }
 
-  async rIng(
-    type: string,
-    path: string,
-    key: string,
-    query?: any,
-    params?: any
-  ) {
+  async rIng(type: string, path: string, key: string, query?: any, params?: any) {
     const isR = await this.onBeforeRoute(this.currentKey, key);
     if (!isR) return false;
     if (this.currentKey && !(await this.uIng(key))) return false;
@@ -171,9 +151,7 @@ export class Router {
       let route = routes[index];
       let element: JSX.Element | undefined;
       if (index > 0) {
-        element = routes[index - 1].$view?.$element?.querySelector(
-          'div[router]'
-        ) as JSX.Element;
+        element = routes[index - 1].$view?.$element?.querySelector('div[router]') as JSX.Element;
         if (!element) {
           throw new Error(`[${key}] parent node is null`);
         }
@@ -205,10 +183,7 @@ export class Router {
       route.$view = component;
     }
     if (this.currentKey) {
-      this.element?.replaceChild(
-        newElement,
-        this.element.firstChild as JSX.Element
-      );
+      this.element?.replaceChild(newElement, this.element.firstChild as JSX.Element);
     } else this.element?.appendChild(newElement);
     const url = `${this.type === 'hash' ? '#' : ''}${path}`;
     switch (type) {

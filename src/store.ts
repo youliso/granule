@@ -1,9 +1,4 @@
-import type {
-  Actions,
-  Store,
-  SubscriptionFn,
-  MappedActions
-} from './types/Store';
+import type { Actions, Store, SubscriptionFn, MappedActions } from './types/Store';
 
 export function createStore<T>(actions: Actions<T>, state: T): Store<T> {
   const subscriptions: SubscriptionFn<T>[] = [];
