@@ -131,7 +131,7 @@ export class Router {
         route.$view?.onActivated && route.$view.onActivated();
       } else {
         route.$view?.onUnmounted && route.$view.onUnmounted();
-        delete route.$view;
+        (route as any) = null;
       }
     }
     return true;
