@@ -47,7 +47,7 @@ export class Router {
   private getChildRoute(keys: string[], routes: Routes) {
     let rs: Route[] = [];
     if (!keys[0]) return rs;
-    const route = routes[keys[0]];
+    let route = routes[keys[0]];
     if (!route) return rs;
     rs.push(route);
     if (route.children && keys.length > 1) {
@@ -134,6 +134,7 @@ export class Router {
         delete route.$view;
       }
     }
+    (routes as any) = null;
     return true;
   }
 
@@ -162,9 +163,9 @@ export class Router {
         route.$view.onAlive && route.$view.onAlive(query, params);
         continue;
       } else if (typeof route.component?.render === 'function') {
-        component = deepClone<View>(route.component);
+        component = { ...deepClone<View>(route.component) };
       } else if (typeof route.component === 'function') {
-        component = (await route.component()) as View;
+        component = { ...(await route.component()) } as View;
       } else {
         throw new Error('component error');
       }
@@ -182,6 +183,7 @@ export class Router {
       component.onReady && component.onReady();
       route.$view = component;
     }
+    (routes as any) = null;
     if (this.currentKey) {
       this.element?.replaceChild(newElement, this.element.firstChild as JSX.Element);
     } else this.element?.appendChild(newElement);

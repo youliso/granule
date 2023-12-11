@@ -1,15 +1,15 @@
 {
   "name": "@youliso/granule",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Vanilla jsx",
+  "type": "module",
   "scripts": {
     "build": "rollup -c rollup.config.mjs && node build.mjs",
     "fix:prettier": "prettier \"./src\" --write",
     "test:prettier": "prettier \"./src\" --list-different"
   },
-  "main": "./index.js",
-  "module": "./index.js",
-  "types": "./index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "keywords": [
     "vanilla",
     "ts",
