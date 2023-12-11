@@ -1,20 +1,20 @@
-import { builtinModules } from "module";
-import { minify } from "rollup-plugin-esbuild-minify";
-import commonjs from "@rollup/plugin-commonjs";
-import nodeResolve from "@rollup/plugin-node-resolve";
-import json from "@rollup/plugin-json";
-import typescript from "rollup-plugin-typescript2";
+import { builtinModules } from 'module';
+import { minify } from 'rollup-plugin-esbuild-minify';
+import commonjs from '@rollup/plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import json from '@rollup/plugin-json';
+import typescript from 'rollup-plugin-typescript2';
 
 const plugins = () => [
   json(),
   commonjs(),
   typescript({
-    useTsconfigDeclarationDir: true,
+    useTsconfigDeclarationDir: true
   }),
   nodeResolve({
-    preferBuiltins: true,
+    preferBuiltins: true
   }),
-  minify(),
+  minify()
 ];
 
 const external = [...builtinModules];
@@ -26,12 +26,12 @@ config.push({
   output: [
     {
       file: `dist/index.js`,
-      format: "esm",
-      sourcemap: false,
-    },
+      format: 'es',
+      sourcemap: false
+    }
   ],
   external,
-  plugins: plugins(),
+  plugins: plugins()
 });
 
 export default config;

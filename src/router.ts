@@ -57,13 +57,13 @@ export class Router {
   }
 
   private getRoute(path: string) {
-    const route = this.routes[path];
+    let route = this.routes[path];
     if (!route) {
       let rs: Route[] = [];
-      const keys = Object.keys(this.routes);
-      const mainRouteKey = keys.filter((key) => path.startsWith(key))[0];
+      let keys = Object.keys(this.routes);
+      let mainRouteKey = keys.filter((key) => path.startsWith(key))[0];
       if (!mainRouteKey) return rs;
-      const mainRoute = this.routes[mainRouteKey];
+      let mainRoute = this.routes[mainRouteKey];
       if (mainRoute) rs.push(mainRoute);
       if (mainRoute.children) {
         const childKey = path.slice(path.indexOf(mainRouteKey) + 1, path.length);
@@ -71,7 +71,7 @@ export class Router {
       }
       return rs;
     }
-    return [this.routes[path]];
+    return [route];
   }
 
   mount(element: JSX.Element | HTMLElement | string, path?: string) {
@@ -122,7 +122,7 @@ export class Router {
   }
 
   async uIng(key: string) {
-    const routes = this.getRoute(this.currentKey);
+    let routes = this.getRoute(this.currentKey);
     if (!routes) return;
     for (let route of routes) {
       if (route.$view?.beforeRoute && !(await route.$view?.beforeRoute(this.currentKey, key)))
@@ -131,7 +131,7 @@ export class Router {
         route.$view?.onActivated && route.$view.onActivated();
       } else {
         route.$view?.onUnmounted && route.$view.onUnmounted();
-        (route as any) = null;
+        delete route.$view;
       }
     }
     return true;
@@ -141,7 +141,7 @@ export class Router {
     const isR = await this.onBeforeRoute(this.currentKey, key);
     if (!isR) return false;
     if (this.currentKey && !(await this.uIng(key))) return false;
-    const routes = this.getRoute(key);
+    let routes = this.getRoute(key);
     if (!routes) {
       throw new Error(`beyond the history of ${key}`);
     }
