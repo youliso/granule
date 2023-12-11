@@ -1,6 +1,6 @@
 {
   "name": "@youliso/granule",
-  "version": "0.0.13",
+  "version": "1.0.0",
   "description": "Vanilla jsx",
   "type": "module",
   "scripts": {
