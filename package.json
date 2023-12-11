@@ -1,6 +1,6 @@
 {
   "name": "@youliso/granule",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Vanilla jsx",
   "scripts": {
     "build": "rollup -c rollup.config.mjs && node build.mjs",

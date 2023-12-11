@@ -1,5 +1,5 @@
 import type { Routes, Route, View } from './types/Router';
-import { toParams } from './utils';
+import { deepClone, toParams } from './utils';
 
 export class Router {
   // 当前路由类型
@@ -162,9 +162,9 @@ export class Router {
         route.$view.onAlive && route.$view.onAlive(query, params);
         continue;
       } else if (typeof route.component?.render === 'function') {
-        component = { ...route.component } as View;
+        component = deepClone<View>(route.component);
       } else if (typeof route.component === 'function') {
-        component = { ...(await route.component()) } as View;
+        component = (await route.component()) as View;
       } else {
         throw new Error('component error');
       }
