@@ -8,7 +8,7 @@ export const onLoad = (query: any) => {
 export const render = async () => {
   return (
     <div>
-      <div>test2</div>
+      <div>test1</div>
       <button onClick={() => router.back()}>back</button>
     </div>
   );

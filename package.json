@@ -31,13 +31,13 @@
   ],
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/node": "^20.10.4",
-    "prettier": "^3.1.1",
-    "rollup": "^4.7.0",
+    "@types/node": "^20.11.27",
+    "prettier": "^3.2.5",
+    "rollup": "^4.13.0",
     "rollup-plugin-esbuild-minify": "^1.1.1",
     "rollup-plugin-typescript2": "^0.36.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   }
 }
